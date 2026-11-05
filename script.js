@@ -9,7 +9,7 @@ const TEXT_GAP = 24;       // vrije ruimte rond tekst en Ja-knop (px)
 const MIN_DISTANCE = 220;  // hoe ver de Nee-knop minstens van de muis landt (px)
 
 const ERROR_TEXT = '⚠️ Foute knop!';  // tekst van de foutmelding op de gsm
-const ERROR_DURATION = 1800;          // hoe lang de melding zichtbaar blijft (ms)
+const ERROR_DURATION = 10001;          // hoe lang de melding zichtbaar blijft (ms)
 
 const CONFETTI_COUNT = 180;
 const CONFETTI_COLORS = ['#3ee0b0', '#f4f9ff', '#ff7a45', '#ffd166', '#6ec6ff'];
