@@ -9,7 +9,7 @@ const TEXT_GAP = 24;       // vrije ruimte rond tekst en Ja-knop (px)
 const MIN_DISTANCE = 220;  // hoe ver de Nee-knop minstens van de muis landt (px)
 
 const ERROR_TEXT = '⚠️ Foute knop!';  // tekst van de foutmelding op de gsm
-const ERROR_DURATION = 10001;          // hoe lang de melding zichtbaar blijft (ms)
+const ERROR_DURATION = 1800;          // hoe lang de melding zichtbaar blijft (ms)
 
 const CONFETTI_COUNT = 180;
 const CONFETTI_COLORS = ['#3ee0b0', '#f4f9ff', '#ff7a45', '#ffd166', '#6ec6ff'];
@@ -77,6 +77,21 @@ function detachNeeButton() {
 
   neeIsLoose = true;
   void neeButton.offsetWidth; // forceer een herberekening, zodat de eerste sprong animeert
+}
+
+/* Zet de Nee-knop terug op zijn startplek in de normale opmaak. */
+function resetNeeButton() {
+  neeButton.blur();
+  neeButton.classList.remove('is-loose');
+  neeButton.style.left = '';
+  neeButton.style.top = '';
+
+  neeSlot.style.width = '';
+  neeSlot.style.height = '';
+
+  neeIsLoose = false;
+  pointer.x = -1000;
+  pointer.y = -1000;
 }
 
 /* Raken twee rechthoeken elkaar (met een extra marge)? */
@@ -269,6 +284,7 @@ function showCurrentView() {
   document.body.classList.toggle('is-ja', isJa);
 
   hideWrongButtonError();
+  resetNeeButton(); // bij elk schermwissel start de Nee-knop weer op zijn plek
 
   const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
   if (isJa && !prefersReducedMotion) startConfetti();
@@ -285,4 +301,10 @@ terugButton.addEventListener('click', () => {
 });
 
 window.addEventListener('hashchange', showCurrentView);
+
+// Terug op de pagina (terugknop van de browser, pagina uit het geheugen, ...)
+window.addEventListener('pageshow', (event) => {
+  if (event.persisted) showCurrentView();
+});
+
 showCurrentView();
