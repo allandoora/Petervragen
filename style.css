@@ -1,0 +1,210 @@
+/* ==========================================================
+   Kleuren: pas enkel dit blok aan om het thema te veranderen.
+   De waarden staan drie keer, voor de donkere modus.
+   ========================================================== */
+:root {
+  --bg: #0e2a47;
+  --text: #f4f9ff;
+  --accent: #3ee0b0;
+  --accent-text: #04251b;
+
+  box-sizing: border-box;
+  padding-top: env(safe-area-inset-top, 0px);
+  padding-bottom: env(safe-area-inset-bottom, 0px);
+}
+
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --bg: #0e2a47;
+    --text: #f4f9ff;
+    --accent: #3ee0b0;
+    --accent-text: #04251b;
+  }
+}
+
+:root[data-theme="dark"] {
+  --bg: #0e2a47;
+  --text: #f4f9ff;
+  --accent: #3ee0b0;
+  --accent-text: #04251b;
+}
+
+
+
+/* ==========================================================
+   Basis
+   ========================================================== */
+*,
+*::before,
+*::after {
+  box-sizing: inherit;
+}
+
+html,
+body {
+  height: 100%;
+  margin: 0;
+}
+
+body {
+  background: var(--bg);
+  color: var(--text);
+  font-family: "Bricolage Grotesque", system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+  overflow: hidden;
+}
+
+main {
+  height: 100%;
+  padding: 24px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 36px;
+  text-align: center;
+}
+
+
+
+/* ==========================================================
+   Tekst
+   ========================================================== */
+h1 {
+  margin: 0;
+  max-width: 12ch;
+  font-size: clamp(2.6rem, 9vw, 6.5rem);
+  font-weight: 800;
+  line-height: 0.98;
+  letter-spacing: -0.03em;
+}
+
+p {
+  margin: 0;
+  max-width: 34ch;
+  font-size: clamp(1.05rem, 2.4vw, 1.4rem);
+  opacity: 0.85;
+}
+
+
+/* ==========================================================
+   Schermen
+   ========================================================== */
+#view-ask,
+#view-ja {
+  flex-direction: column;
+  align-items: center;
+  gap: 36px;
+}
+
+
+#view-ask {
+  display: flex;
+}
+
+#view-ja {
+  display: none;
+}
+
+/* Als de klas "is-ja" op de body staat, tonen we het tweede scherm */
+body.is-ja #view-ask {
+  display: none;
+}
+
+body.is-ja #view-ja {
+  display: flex;
+}
+
+
+/* ==========================================================
+   Knoppen
+   ========================================================== */
+.buttons {
+  min-height: 68px;
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  align-items: center;
+  gap: 20px;
+}
+
+button {
+  padding: 16px 44px;
+
+  border: 3px solid var(--accent);
+  border-radius: 999px;
+  font: inherit;
+  font-size: 1.5rem;
+  font-weight: 800;
+  cursor: pointer;
+  transition:
+    transform 0.15s,
+    left 0.25s cubic-bezier(0.2, 0.8, 0.2, 1),
+    top 0.25s cubic-bezier(0.2, 0.8, 0.2, 1);
+}
+
+button:focus-visible {
+  outline: 3px solid var(--text);
+  outline-offset: 4px;
+}
+
+/* Ja-knop */
+#btn-ja {
+  background: var(--accent);
+  color: var(--accent-text);
+}
+
+#btn-ja:hover {
+  transform: scale(1.08);
+}
+
+/* Nee-knop */
+#btn-nee {
+  background: transparent;
+  border-color: var(--text);
+  color: var(--text);
+
+}
+
+/* Zodra de Nee-knop begint te vluchten, wordt hij vrij gepositioneerd
+   en ligt hij boven alle tekst. */
+#btn-nee.is-loose {
+  position: fixed;
+  z-index: 5;
+  margin: 0;
+}
+
+#nee-slot {
+  display: inline-block;
+}
+
+/* Kleine knop op het tweede scherm */
+.btn-small {
+  padding: 10px 26px;
+  background: transparent;
+  border-color: var(--text);
+  color: var(--text);
+  font-size: 1rem;
+  opacity: 0.8;
+}
+
+
+/* ==========================================================
+   Confetti
+   ========================================================== */
+#confetti {
+  position: fixed;
+  inset: 0;
+  z-index: 1;
+
+  pointer-events: none;
+}
+
+
+/* ==========================================================
+   Minder beweging voor wie dat verkiest
+   ========================================================== */
+@media (prefers-reduced-motion: reduce) {
+  button {
+    transition: none;
+  }
+}

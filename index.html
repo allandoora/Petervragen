@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="nl">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <title>Daan, wil jij mijn peter zijn?</title>
+
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,500;12..96,800&display=swap">
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+  <!-- Laag voor de confetti -->
+  <canvas id="confetti" aria-hidden="true"></canvas>
+
+  <main>
+
+    <!-- Scherm 1: de vraag -->
+    <section id="view-ask">
+      <h1>Daan, wil jij mijn peter zijn?</h1>
+      <p>Een serieuze vraag van een serieuze jongen aan een serieuze peter in een serieuze zin</p>
+
+      <div class="buttons">
+        <button id="btn-ja" type="button">Ja</button>
+
+        <!-- Het vakje houdt de plaats vrij wanneer de Nee-knop wegspringt -->
+        <span id="nee-slot">
+          <button id="btn-nee" type="button">Nee</button>
+        </span>
+      </div>
+    </section>
+
+
+    <!-- Scherm 2: het antwoord na "Ja" -->
+    <section id="view-ja">
+      <h1>Gefeliciteerd, nu ben je mijn peter!</h1>
+      <p>#zinIn</p>
+      <button id="btn-terug" class="btn-small" type="button">Terug naar de vraag</button>
+    </section>
+
+  </main>
+
+  <script src="script.js"></script>
+</body>
+</html>
