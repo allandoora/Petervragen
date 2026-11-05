@@ -8,6 +8,9 @@ const GRID_STEP = 20;      // fijnheid waarmee we naar vrije plekken zoeken (px)
 const TEXT_GAP = 24;       // vrije ruimte rond tekst en Ja-knop (px)
 const MIN_DISTANCE = 220;  // hoe ver de Nee-knop minstens van de muis landt (px)
 
+const ERROR_TEXT = '⚠️ Foute knop!';  // tekst van de foutmelding op de gsm
+const ERROR_DURATION = 10001;          // hoe lang de melding zichtbaar blijft (ms)
+
 const CONFETTI_COUNT = 180;
 const CONFETTI_COLORS = ['#3ee0b0', '#f4f9ff', '#ff7a45', '#ffd166', '#6ec6ff'];
 
@@ -19,6 +22,7 @@ const jaButton    = document.getElementById('btn-ja');
 const neeButton   = document.getElementById('btn-nee');
 const neeSlot     = document.getElementById('nee-slot');
 const terugButton = document.getElementById('btn-terug');
+const errorToast  = document.getElementById('error-toast');
 
 const title    = document.querySelector('#view-ask h1');
 const subtitle = document.querySelector('#view-ask p');
@@ -28,8 +32,32 @@ const ctx    = canvas.getContext('2d');
 
 
 /* ==========================================================
+   Foutmelding (enkel bij aanraking met een vinger)
+   We kijken naar het soort aanwijzer van de gebeurtenis zelf:
+   "touch" is een vinger, "mouse" is een muis of touchpad.
+   Zo krijgt een laptop met touchscreen alleen een melding
+   als je de knop echt met je vinger aanraakt.
+   ========================================================== */
+let toastTimer = 0;
+
+function showWrongButtonError() {
+  errorToast.textContent = ERROR_TEXT;
+  errorToast.classList.add('is-visible');
+
+  clearTimeout(toastTimer);
+  toastTimer = setTimeout(hideWrongButtonError, ERROR_DURATION);
+}
+
+function hideWrongButtonError() {
+  clearTimeout(toastTimer);
+  errorToast.classList.remove('is-visible');
+}
+
+
+/* ==========================================================
    De Nee-knop laten ontwijken
    ========================================================== */
+
 let neeIsLoose = false;
 const pointer = { x: -1000, y: -1000 };
 
@@ -49,16 +77,6 @@ function detachNeeButton() {
 
   neeIsLoose = true;
   void neeButton.offsetWidth; // forceer een herberekening, zodat de eerste sprong animeert
-}
-
-/* Zet de Nee-knop terug op zijn oorspronkelijke plek in de opmaak. */
-function resetNeeButton() {
-  neeButton.classList.remove('is-loose');
-  neeButton.style.left = '';
-  neeButton.style.top = '';
-  neeSlot.style.width = '';
-  neeSlot.style.height = '';
-  neeIsLoose = false;
 }
 
 /* Raken twee rechthoeken elkaar (met een extra marge)? */
@@ -136,6 +154,7 @@ function dodge(event) {
   }
 
   const spot = findFreeSpot();
+
   neeButton.style.left = spot.x + 'px';
   neeButton.style.top = spot.y + 'px';
 }
@@ -146,6 +165,11 @@ neeButton.addEventListener('pointerdown', dodge);
 neeButton.addEventListener('touchstart', dodge, { passive: false });
 neeButton.addEventListener('focus', dodge);
 neeButton.addEventListener('click', dodge);
+
+// Aanraking met een vinger: toon ook de foutmelding
+neeButton.addEventListener('pointerdown', (event) => {
+  if (event.pointerType === 'touch') showWrongButtonError();
+});
 
 // Springt ook al weg als de muis dichtbij komt
 document.addEventListener('pointermove', (event) => {
@@ -168,6 +192,7 @@ document.addEventListener('pointermove', (event) => {
 window.addEventListener('resize', () => {
   if (neeIsLoose) dodge();
 });
+
 
 
 /* ==========================================================
@@ -201,6 +226,7 @@ function startConfetti() {
   animateConfetti();
 }
 
+
 function animateConfetti() {
   ctx.clearRect(0, 0, canvas.width, canvas.height);
 
@@ -233,25 +259,24 @@ resizeCanvas();
 window.addEventListener('resize', resizeCanvas);
 
 
+
 /* ==========================================================
    Schermen wisselen
    De adresbalk bepaalt welk scherm je ziet: "#ja" toont het tweede scherm.
    ========================================================== */
 function showCurrentView() {
   const isJa = location.hash === '#ja';
-
-  // Bij elke schermwissel start de Nee-knop weer op zijn eigen plek
-  resetNeeButton();
-
   document.body.classList.toggle('is-ja', isJa);
+
+  hideWrongButtonError();
 
   const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
   if (isJa && !prefersReducedMotion) startConfetti();
 }
 
-// Het adres verandert naar "#ja", daarna roept "hashchange" showCurrentView aan
 jaButton.addEventListener('click', () => {
   location.hash = 'ja';
+  showCurrentView();
 });
 
 terugButton.addEventListener('click', () => {
@@ -259,13 +284,5 @@ terugButton.addEventListener('click', () => {
   showCurrentView();
 });
 
-// Terugknop of vooruitknop van de browser
 window.addEventListener('hashchange', showCurrentView);
-
-// Browsers bewaren soms een pagina met alle toestand erbij en tonen
-// die opnieuw bij "terug". In dat geval laden we de pagina als nieuw in.
-window.addEventListener('pageshow', (event) => {
-  if (event.persisted) showCurrentView();
-});
-
 showCurrentView();

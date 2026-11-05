@@ -162,7 +162,6 @@ button:focus-visible {
   background: transparent;
   border-color: var(--text);
   color: var(--text);
-
 }
 
 /* Zodra de Nee-knop begint te vluchten, wordt hij vrij gepositioneerd
@@ -189,6 +188,34 @@ button:focus-visible {
 
 
 /* ==========================================================
+   Foutmelding (wordt enkel getoond op een aanraakscherm)
+   ========================================================== */
+#error-toast {
+  position: fixed;
+  top: calc(env(safe-area-inset-top, 0px) + 16px);
+  left: 50%;
+  z-index: 10;
+  max-width: calc(100% - 32px);
+  padding: 12px 22px;
+  border-radius: 12px;
+  background: #ff4d4d;
+  color: #fff;
+  font-weight: 800;
+  font-size: 1.1rem;
+  text-align: center;
+  pointer-events: none;
+  opacity: 0;
+  transform: translate(-50%, -20px);
+  transition: opacity 0.2s, transform 0.2s;
+}
+
+#error-toast.is-visible {
+  opacity: 1;
+  transform: translate(-50%, 0);
+}
+
+
+/* ==========================================================
    Confetti
    ========================================================== */
 #confetti {
@@ -204,7 +231,8 @@ button:focus-visible {
    Minder beweging voor wie dat verkiest
    ========================================================== */
 @media (prefers-reduced-motion: reduce) {
-  button {
+  button,
+  #error-toast {
     transition: none;
   }
 }
